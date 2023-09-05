@@ -1,4 +1,33 @@
 import pickle
+from datetime import datetime
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+import os
+
+# Function to create the PDF report
+def create_pdf_report(results):
+    pdf_directory = "pdf"
+    if not os.path.exists(pdf_directory):
+        os.mkdir(pdf_directory)
+
+    filename = f"{pdf_directory}/report_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf"
+    doc = SimpleDocTemplate(filename, pagesize=letter)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Add a title to the PDF
+    title = Paragraph("Cryptocurrency Position Comparison Report<br/><br/><br/>", styles['Title'])
+    story.append(title)
+
+    # Add the results to the PDF
+    for result in results:
+        text = Paragraph(result, styles['Normal'])
+        story.append(text)
+
+    doc.build(story)
+    print(f"Report saved as {filename}")
+
 
 def compare_positions():
     # Load the coin_data_list from the pickle file
@@ -51,25 +80,38 @@ def compare_positions():
     # Find the top 5 ascending moved coins
     ascending_moved_coins = up_positions[:5]
 
+    #terminal printing and PDF creation section
+    #Create a list to store the results for PDF
+    results = []
+
     # Print the number of loops scanned
     print(f"Number of loops scanned: {loop_count}")
 
     # Print the top 10 coins
-    print("\nTop 10 Coins:")
+    print("\n\nTop 10 Coins:")
+    results.append("<br/>Top 10 Coins: <br/>")
     for coin in top_10_coins:
         print(f"{coin['CoinName']} - Position: {coin['Position']}")
+        results.append(f"{coin['CoinName']} - Position: {coin['Position']}")
 
     # Print up to 5 new coins in the top 10
     if new_top_10_coins:
-        print("\nNew Coins in Top 10:")
+        print("\n\nNew Coins in Top 10:")
+        results.append("<br/>New Coins in Top 10: <br/>")
         for coin in new_top_10_coins:
             print(f"{coin['CoinName']} - Position: {coin['Position']}")
-
+            results.append(f"{coin['CoinName']} - Position: {coin['Position']}")
+            
     # Print the top 5 ascending moved coins
     if ascending_moved_coins:
-        print("\nTop 5 Ascending Moved Coins:")
+        print("\n\nTop 5 Ascending Moved Coins:")
+        results.append("<br/>Top 5 Ascending Moved Coins: <br/>")
         for coin in ascending_moved_coins:
             print(f"{coin[0]} - Moved Up from Position {coin[1]} to {coin[2]}")
+            results.append(f"{coin[0]} - Moved Up from Position {coin[1]} to {coin[2]}")
+
+    #Create the PDF report
+    create_pdf_report(results)
 
 # Run the position comparison
 compare_positions()
