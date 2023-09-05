@@ -5,8 +5,14 @@ import time
 import pickle
 from datetime import datetime
 
-timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+def get_time(): #update timestamp variable
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return timestamp
+
+
+timestamp = get_time()
 print(f"{timestamp} - Running CoinalyzeScrapper...")
+
 
 def scrape_coinalyze(): #The function that scrapes coinylize website and return the position of every coin in that moment...
     url = 'https://coinalyze.net/?order_by=volume_24hour&order_dir=desc'
@@ -29,7 +35,9 @@ def scrape_coinalyze(): #The function that scrapes coinylize website and return 
 
     return coin_data
 
+
 def job():
+    timestamp = get_time()
     print(f"{timestamp} - Scraping Coinalyze...")
     coin_data = scrape_coinalyze()
 
@@ -48,7 +56,7 @@ def job():
         pickle.dump(coin_data_list, file)
 
 # Schedule the job to run every 5 minutes
-schedule.every(30).minutes.do(job)
+schedule.every(1).minutes.do(job)
 
 while True:
     schedule.run_pending()
