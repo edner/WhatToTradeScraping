@@ -17,7 +17,7 @@ def create_pdf_report(results):
     story = []
 
     # Add a title to the PDF
-    title = Paragraph("Cryptocurrency Position Comparison Report<br/><br/><br/>", styles['Title'])
+    title = Paragraph(f"Cryptocurrency Position Comparison Report {datetime.now().strftime('%Y-%m-%d')}<br/><br/><br/>", styles['Title'])
     story.append(title)
 
     # Add the results to the PDF
